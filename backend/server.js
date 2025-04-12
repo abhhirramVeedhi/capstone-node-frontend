@@ -162,7 +162,7 @@ const upload = multer({ storage: storage });
 
 // Home route
 app.get("/", (req, res) => {
-  res.render("home", { result: null });
+  res.send("Home route working!");
 });
 
 // Detect (GET page)

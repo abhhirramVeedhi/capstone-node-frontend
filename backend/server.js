@@ -123,9 +123,10 @@ const fetch = (...args) =>
 const FormData = require("form-data");
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", path.join(__dirname, "../views"));
 
-app.use(express.static(path.join(__dirname, "../public")));
+express.static(path.join(__dirname, "../public"))
+
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/heatmaps", express.static(path.join(__dirname, "../heatmaps")));
 
@@ -168,7 +169,7 @@ app.post("/detect", upload.single("file"), async (req, res) => {
     const formData = new FormData();
     formData.append("image", fs.createReadStream(filepath));
 
-    const response = await fetch("http://127.0.0.1:5000/predict", {
+    const response = await fetch("https://capstone-node-frontend.onrender.com/predict", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),

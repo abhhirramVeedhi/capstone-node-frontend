@@ -1,0 +1,279 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home - Deepfake Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #1e1e2f, #2e3c5d);
+      color: white;
+      border-radius: 1rem;
+      margin: 2rem auto;
+      max-width: 700px;
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .hero a {
+      padding: 0.8rem 1.5rem;
+      background-color: #ff4f5a;
+      color: white;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .hero a:hover {
+      background-color: #e03e49;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1><i class="fas fa-user-secret"></i> Deepfake Detector</h1>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/detect">Detect</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/learn">Learn</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h2>Uncover the Truth Behind Faces</h2>
+    <p>Our AI-powered platform detects deepfake content to ensure authenticity and security. Protect digital identity and detect fake media with precision.</p>
+    <a href="/detect">Start Detecting</a>
+  </section>
+
+  <footer>
+    &copy; 2025 Deepfake Detector. All Rights Reserved.
+  </footer>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Deepfake Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #f0f0f5, #e8ecf5);
+      color: #333;
+      border-radius: 1rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      box-shadow: 0 10px 30px rgba(77, 140, 255, 0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #4d8cff, #6a9fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #444;
+    }
+
+    .hero a {
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(90deg, #4d8cff, #6a9fff);
+      color: #fff;
+      border-radius: 2rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(77, 140, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero a:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(77, 140, 255, 0.5);
+    }
+
+    .hero a::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+
+    .hero a:hover::after {
+      opacity: 1;
+      animation: shine 1s forwards;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 3rem auto;
+      max-width: 1000px;
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, #ffffff, #f0f0f5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      flex: 1 1 250px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(77, 140, 255, 0.2);
+    }
+
+    .feature-card i {
+      font-size: 2.5rem;
+      color: #4d8cff;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      color: #4d8cff;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 5px rgba(77, 140, 255, 0.3);
+      }
+
+      100% {
+        text-shadow: 0 0 20px rgba(77, 140, 255, 0.5);
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/" style="text-decoration: none;">
+      <h1 class="footer-logo" style="cursor: pointer;">
+        <i class="fas fa-user-secret"></i> Deepfake Detector
+      </h1>
+    </a>
+    <ul>
+      <li><a href="/" class="active"><span>Home</span></a></li>
+      <li><a href="/detect"><span>Detect</span></a></li>
+      <li><a href="/dashboard"><span>Dashboard</span></a></li>
+      <li><a href="/learn"><span>Learn</span></a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h2>Uncover the Truth Behind Faces</h2>
+    <p>Our AI-powered platform detects deepfake content to ensure authenticity and security. Protect digital identity
+      and detect fake media with precision.</p>
+    <a href="/detect" class="pulsing-btn">Start Detecting <i class="fas fa-arrow-right"></i></a>
+  </section>
+
+  <div class="features">
+    <div class="feature-card">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Advanced Protection</h3>
+      <p>State-of-the-art AI algorithms trained to detect even the most sophisticated deepfakes.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-tachometer-alt"></i>
+      <h3>Fast Analysis</h3>
+      <p>Get results in seconds with our optimized detection system.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-chart-line"></i>
+      <h3>Detailed Reports</h3>
+      <p>View comprehensive analytics and track detection history in your dashboard.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <a href="/" style="text-decoration: none;">
+        <div class="footer-logo" style="cursor: pointer;">
+          <i class="fas fa-user-secret"></i> Deepfake Detector
+        </div>
+      </a>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/abhhirram-veedhi-445276280/" style="font-size: 2em;"><i
+            class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/abhhirramVeedhi" style="font-size: 2em;"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 Deepfake Detector. All Rights Reserved.
+    </div>
+  </footer>
+</body>
+
+</html>

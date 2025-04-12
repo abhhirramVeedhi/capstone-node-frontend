@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Deepfake Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @media (min-width: 992px) {
+      .dashboard-container {
+        grid-template-columns: 1fr 2fr;
+      }
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #ffffff, #f0f0f5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(77, 140, 255, 0.2);
+    }
+
+    .stat-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-card.real i {
+      color: #00ff8c;
+    }
+
+    .stat-card.fake i {
+      color: #ff4f5a;
+    }
+
+    .stat-card.total i {
+      color: #6a9fff;
+    }
+
+    .stat-card h3 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card.real h3 {
+      color: #00ff8c;
+    }
+
+    .stat-card.fake h3 {
+      color: #ff4f5a;
+    }
+
+    .stat-card.total h3 {
+      color: #6a9fff;
+    }
+
+    .stat-card p {
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .chart-card {
+      background: linear-gradient(135deg, #ffffff, #f0f0f5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(77, 140, 255, 0.2);
+    }
+
+    .chart-card h3 {
+      color: #4d8cff;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+
+    .log-table-container {
+      background: linear-gradient(135deg, #ffffff, #f0f0f5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 2rem;
+    }
+
+    .log-table-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(77, 140, 255, 0.2);
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .log-table th {
+      background-color: rgba(77, 140, 255, 0.1);
+      color: #4d8cff;
+      font-weight: 500;
+      text-align: left;
+      padding: 1rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .log-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #eaeaea;
+      color: #333;
+    }
+
+    .log-table tr:hover td {
+      background-color: rgba(77, 140, 255, 0.05);
+    }
+
+    .log-table .prediction-cell {
+      font-weight: 500;
+      padding: 0.3rem 0.8rem;
+      border-radius: 1rem;
+      display: inline-block;
+    }
+
+    .log-table .real {
+      background-color: rgba(77, 140, 255, 0.1);
+      color: #4d8cff;
+    }
+
+    .log-table .fake {
+      background-color: rgba(255, 79, 90, 0.1);
+      color: #ff4f5a;
+    }
+
+    .confidence-pill {
+      height: 8px;
+      width: 100%;
+      background: #f0f0f5;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .confidence-fill.real {
+      height: 100%;
+      background: linear-gradient(90deg, #4d8cff, #6a9fff);
+      border-radius: 4px;
+    }
+
+    .confidence-fill.fake {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4f5a, #ff6b74);
+      border-radius: 4px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 2rem;
+      color: #555;
+    }
+
+    .no-data i {
+      font-size: 3rem;
+      color: #4d8cff;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .confidence-distribution {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .confidence-category {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .confidence-label {
+      width: 100px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .confidence-bar-container {
+      flex-grow: 1;
+      background-color: #f0f0f5;
+      height: 30px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .confidence-bar {
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+
+    .confidence-bar.high {
+      background: linear-gradient(90deg, #00ff8c, #96ffe3);
+    }
+
+    .confidence-bar.medium {
+      background: linear-gradient(90deg, #ffd166, #ffe066);
+    }
+
+    .confidence-bar.low {
+      background: linear-gradient(90deg, #ff4f5a, #ff8c94);
+    }
+
+    .confidence-value {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Toggle button styles */
+    .toggle-logs-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #4d8cff, #6a9fff);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 2rem auto;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(77, 140, 255, 0.3);
+    }
+
+    .toggle-logs-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(77, 140, 255, 0.4);
+    }
+
+    .toggle-logs-btn i {
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-logs-btn.active i {
+      transform: rotate(180deg);
+    }
+
+    /* Hidden table container */
+    .logs-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .logs-content.open {
+      max-height: 2000px;
+      /* Adjust as needed for your content */
+      transition: max-height 1s ease-in;
+    }
+
+    /* Add a wrapper for the toggle button + table */
+    .logs-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/" style="text-decoration: none;">
+      <h1 class="footer-logo" style="cursor: pointer;">
+        <i class="fas fa-user-secret"></i> Deepfake Detector
+      </h1>
+    </a>
+    <ul>
+      <li><a href="/"><span>Home</span></a></li>
+      <li><a href="/detect"><span>Detect</span></a></li>
+      <li><a href="/dashboard" class="active"><span>Dashboard</span></a></li>
+      <li><a href="/learn"><span>Learn</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2 class="section-title">Detection Dashboard</h2>
+
+    <div class="stats-container">
+      <div class="stat-card total">
+        <i class="fas fa-image"></i>
+        <h3>
+          <%= real + fake %>
+        </h3>
+        <p>Total Images</p>
+      </div>
+      <div class="stat-card real">
+        <i class="fas fa-check-circle"></i>
+        <h3>
+          <%= real %>
+        </h3>
+        <p>Authentic Images</p>
+      </div>
+      <div class="stat-card fake">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>
+          <%= fake %>
+        </h3>
+        <p>Deepfakes Detected</p>
+      </div>
+    </div>
+
+    <div class="dashboard-container">
+      <div class="chart-card">
+        <h3>Detection Results</h3>
+        <div class="chart-container">
+          <canvas id="resultsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Confidence Distribution</h3>
+        <div class="confidence-distribution">
+          <div class="confidence-category">
+            <div class="confidence-label">High (80-100%)</div>
+            <div class="confidence-bar-container">
+              <div class="confidence-bar high" id="highConfidenceBar"></div>
+              <div class="confidence-value" id="highConfidenceValue"></div>
+            </div>
+          </div>
+          <div class="confidence-category">
+            <div class="confidence-label">Medium (50-79%)</div>
+            <div class="confidence-bar-container">
+              <div class="confidence-bar medium" id="mediumConfidenceBar"></div>
+              <div class="confidence-value" id="mediumConfidenceValue"></div>
+            </div>
+          </div>
+          <div class="confidence-category">
+            <div class="confidence-label">Low (0-49%)</div>
+            <div class="confidence-bar-container">
+              <div class="confidence-bar low" id="lowConfidenceBar"></div>
+              <div class="confidence-value" id="lowConfidenceValue"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-container" style="height: 180px;">
+          <canvas id="confidenceChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Table Toggle Section -->
+    <div class="logs-wrapper">
+      <button class="toggle-logs-btn" id="toggleLogsBtn">
+        <i class="fas fa-chevron-down"></i>
+        <span>View Detection Logs</span>
+      </button>
+
+      <div class="logs-content" id="logsContent">
+        <div class="log-table-container">
+          <h3 style="color: #4686c2; margin-bottom: 1rem;">Recent Detection Logs</h3>
+
+          <% if (logs && logs.length> 0) { %>
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th>Filename</th>
+                  <th>Prediction</th>
+                  <th>Confidence</th>
+                  <th>Date</th>
+                  <!-- <th>Feedback</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <% logs.forEach(log=> { %>
+                  <tr>
+                    <td>
+                      <%= log.filename %>
+                    </td>
+                    <td>
+                      <span
+                        class="prediction-cell <%= log.prediction.toLowerCase().includes('real') ? 'real' : 'fake' %>">
+                        <%= log.prediction %>
+                      </span>
+                    </td>
+                    <td>
+                      <div>
+                        <%= log.confidence %>%
+                      </div>
+                      <div class="confidence-pill">
+                        <div
+                          class="confidence-fill <%= log.prediction.toLowerCase().includes('real') ? 'real' : 'fake' %>"
+                          style="width: <%= log.confidence %>%"></div>
+                      </div>
+                    </td>
+                    <td>
+                      <%= new Date(log.date).toLocaleString() %>
+                    </td>
+                    <!-- <td>
+                      <%= log.feedback || 'N/A' %>
+                    </td> -->
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+            <% } else { %>
+              <div class="no-data">
+                <i class="fas fa-inbox"></i>
+                <p>No detection logs available yet. Try detecting some images!</p>
+              </div>
+              <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <a href="/" style="text-decoration: none;">
+        <div class="footer-logo" style="cursor: pointer;">
+          <i class="fas fa-user-secret"></i> Deepfake Detector
+        </div>
+      </a>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/contact.html">Contact Us</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/abhhirram-veedhi-445276280/" style="font-size: 2em;"><i
+            class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/abhhirramVeedhi" style="font-size: 2em;"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 Deepfake Detector. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- Charts script -->
+  <script>
+    // Results pie chart
+    const resultsCtx = document.getElementById('resultsChart').getContext('2d');
+    new Chart(resultsCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Authentic', 'Deepfake'],
+        datasets: [{
+          data: [<%= real %>, <%= fake %>],
+          backgroundColor: ['#00ff8c', '#ff4f5a'],
+          borderColor: '#16213e',
+          borderWidth: 2,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#333',
+              font: {
+                family: 'Poppins',
+                size: 12
+              }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(26, 26, 46, 0.8)',
+            titleColor: '#00ffff',
+            bodyColor: '#ffffff',
+            borderColor: '#00ffff',
+            borderWidth: 1,
+            displayColors: false,
+            padding: 10
+          }
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+          duration: 2000,
+          easing: 'easeOutQuart'
+        },
+        cutout: '65%'
+      }
+    });
+
+    // Get confidence distribution data - ensure they're numbers
+    const highConfidenceValue = parseInt('<%= typeof highConfidence !== "undefined" ? highConfidence : 0 %>') || 0;
+    const mediumConfidenceValue = parseInt('<%= typeof mediumConfidence !== "undefined" ? mediumConfidence : 0 %>') || 0;
+    const lowConfidenceValue = parseInt('<%= typeof lowConfidence !== "undefined" ? lowConfidence : 0 %>') || 0;
+
+    // Debug to check values
+    console.log("Confidence values:", {
+      high: highConfidenceValue,
+      medium: mediumConfidenceValue,
+      low: lowConfidenceValue
+    });
+
+    // Update the horizontal bars
+    document.getElementById('highConfidenceBar').style.width = highConfidenceValue + '%';
+    document.getElementById('mediumConfidenceBar').style.width = mediumConfidenceValue + '%';
+    document.getElementById('lowConfidenceBar').style.width = lowConfidenceValue + '%';
+
+    document.getElementById('highConfidenceValue').textContent = highConfidenceValue + '%';
+    document.getElementById('mediumConfidenceValue').textContent = mediumConfidenceValue + '%';
+    document.getElementById('lowConfidenceValue').textContent = lowConfidenceValue + '%';
+
+    // Create horizontal bar chart for confidence distribution
+    const confidenceCtx = document.getElementById('confidenceChart').getContext('2d');
+    const confidenceChart = new Chart(confidenceCtx, {
+      type: 'bar',
+      data: {
+        labels: ['High (80-100%)', 'Medium (50-79%)', 'Low (0-49%)'],
+        datasets: [{
+          axis: 'y',
+          data: [highConfidenceValue, mediumConfidenceValue, lowConfidenceValue],
+          backgroundColor: [
+            'rgba(0, 255, 140, 0.7)',
+            'rgba(255, 209, 102, 0.7)',
+            'rgba(255, 79, 90, 0.7)'
+          ],
+          borderColor: [
+            'rgba(0, 255, 140, 1)',
+            'rgba(255, 209, 102, 1)',
+            'rgba(255, 79, 90, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(26, 26, 46, 0.8)',
+            titleColor: '#00ffff',
+            bodyColor: '#ffffff',
+            borderColor: '#00ffff',
+            borderWidth: 1,
+            displayColors: false,
+            padding: 10,
+            callbacks: {
+              label: function (context) {
+                return `${context.raw}% of detections`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 100,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#333',
+              callback: function (value) {
+                return value + '%';
+              }
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#333'
+            }
+          }
+        },
+        animation: {
+          duration: 2000,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+
+    // Animation for the confidence bars with a slight delay for visual effect
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(() => {
+        document.getElementById('highConfidenceBar').style.width = highConfidenceValue + '%';
+        document.getElementById('mediumConfidenceBar').style.width = mediumConfidenceValue + '%';
+        document.getElementById('lowConfidenceBar').style.width = lowConfidenceValue + '%';
+      }, 300);
+
+      // Add toggle functionality for logs table
+      const toggleLogsBtn = document.getElementById('toggleLogsBtn');
+      const logsContent = document.getElementById('logsContent');
+
+      toggleLogsBtn.addEventListener('click', function () {
+        // Toggle the active class on the button
+        this.classList.toggle('active');
+
+        // Toggle the open class on the content
+        logsContent.classList.toggle('open');
+
+        // Update button text based on state
+        const buttonSpan = this.querySelector('span');
+        if (logsContent.classList.contains('open')) {
+          buttonSpan.textContent = 'Hide Detection Logs';
+        } else {
+          buttonSpan.textContent = 'View Detection Logs';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,361 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detect Deepfake</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav>
+    <h1><i class="fas fa-user-secret"></i> Deepfake Detector</h1>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/detect">Detect</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/learn">Learn</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2 class="section-title">Upload Image for Detection</h2>
+    <form action="/detect" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*" required />
+      <button type="submit">Detect</button>
+    </form>
+
+    <% if (result) { %>
+      <div class="result-box">
+        <p><strong>Prediction:</strong> <%= result.prediction %></p>
+        <p><strong>Confidence:</strong> <%= result.confidence %> %</p>
+        <img src="<%= result.heatmap %>" alt="Heatmap" style="max-width: 400px; margin-top: 10px;" />
+      </div>
+    <% } %>
+  </div>
+
+  <footer>
+    &copy; 2025 Deepfake Detector. All Rights Reserved.
+  </footer>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detect Deepfake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .detection-area {
+      background: linear-gradient(135deg, #f0f0f5, #e8ecf5);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 700px;
+      box-shadow: 0 10px 30px rgba(77, 140, 255, 0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .file-upload {
+      position: relative;
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      border: 2px dashed #4d8cff;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+    }
+
+    .file-upload:hover {
+      background: #f5f5f7;
+      border-color: #6a9fff;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-upload i {
+      font-size: 3rem;
+      color: #4d8cff;
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
+    }
+
+    .file-upload p {
+      color: #555;
+    }
+
+    .detect-btn {
+      background: linear-gradient(90deg, #4d8cff, #6a9fff);
+      color: #fff;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 2rem;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(77, 140, 255, 0.3);
+      display: block;
+      width: 200px;
+      margin: 0 auto;
+    }
+
+    .detect-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(77, 140, 255, 0.5);
+    }
+
+    .result-box {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-top: 2rem;
+      border-left: 4px solid;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .result-real {
+      border-color: #2ecc71;
+    }
+
+    .result-fake {
+      border-color: #e74c3c;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-icon {
+      font-size: 2rem;
+      margin-right: 1rem;
+    }
+
+    .result-icon.real {
+      color: #2ecc71;
+    }
+
+    .result-icon.fake {
+      color: #e74c3c;
+    }
+
+    .result-title {
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .confidence-bar {
+      height: 10px;
+      background: #e8e8ee;
+      border-radius: 5px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+
+    .confidence-level {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 1s ease-in-out;
+    }
+
+    .confidence-real {
+      background: linear-gradient(90deg, #27ae60, #2ecc71);
+    }
+
+    .confidence-fake {
+      background: linear-gradient(90deg, #c0392b, #e74c3c);
+    }
+
+    .heatmap-container {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .heatmap-title {
+      color: #4d8cff;
+      margin-bottom: 1rem;
+    }
+
+    .heatmap-img {
+      max-width: 100%;
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-name {
+      margin-top: 1rem;
+      color: #555;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-20px);
+      }
+
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="/" style="text-decoration: none;">
+      <h1 class="footer-logo" style="cursor: pointer;">
+        <i class="fas fa-user-secret"></i> Deepfake Detector
+      </h1>
+    </a>
+    <ul>
+      <li><a href="/"><span>Home</span></a></li>
+      <li><a href="/detect" class="active"><span>Detect</span></a></li>
+      <li><a href="/dashboard"><span>Dashboard</span></a></li>
+      <li><a href="/learn"><span>Learn</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2 class="section-title">Upload Image for Detection</h2>
+
+    <div class="detection-area">
+      <form action="/detect" method="POST" enctype="multipart/form-data">
+        <div class="file-upload" id="dropZone">
+          <input type="file" name="file" id="fileInput" accept="image/*" required />
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drag and drop your image here<br>or click to browse</p>
+          <p class="file-name" id="fileName"></p>
+        </div>
+        <button type="submit" class="detect-btn">
+          <i class="fas fa-search"></i> Detect
+        </button>
+      </form>
+
+      <% if (result) { %>
+        <div class="result-box <%= result.prediction.toLowerCase() === 'real' ? 'result-real' : 'result-fake' %>">
+          <div class="result-header">
+            <!-- <% if (result.prediction.toLowerCase()==='real' ) { %>
+              <i class="fas fa-check-circle result-icon real"></i>
+              <h3 class="result-title">Image Appears Authentic</h3>
+              <% } else { %>
+                <i class="fas fa-exclamation-triangle result-icon fake"></i>
+                <h3 class="result-title">Deepfake Detected</h3>
+                <% } %> -->
+          </div>
+
+          <p><strong>Analysis:</strong> This image is <%= result.prediction.toLowerCase() %> with <%= result.confidence
+                %>% confidence.</p>
+
+          <div class="confidence-bar">
+            <div
+              class="confidence-level <%= result.prediction.toLowerCase() === 'real' ? 'confidence-real' : 'confidence-fake' %>"
+              style="width: <%= result.confidence %>%"></div>
+          </div>
+
+          <div class="heatmap-container">
+            <h4 class="heatmap-title">Detection Heatmap</h4>
+            <img src="<%= result.heatmap %>" alt="Detection Heatmap" class="heatmap-img" />
+          </div>
+        </div>
+        <% } %>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <a href="/" style="text-decoration: none;">
+        <div class="footer-logo" style="cursor: pointer;">
+          <i class="fas fa-user-secret"></i> Deepfake Detector
+        </div>
+      </a>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/contact.html">Contact Us</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/abhhirram-veedhi-445276280/" style="font-size: 2em;"><i
+            class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/abhhirramVeedhi" style="font-size: 2em;"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 Deepfake Detector. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const dropZone = document.getElementById('dropZone');
+
+    fileInput.addEventListener('change', function () {
+      if (this.files && this.files[0]) {
+        fileName.textContent = this.files[0].name;
+        dropZone.style.borderColor = '#2ecc71';
+      }
+    });
+
+    dropZone.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      dropZone.style.background = '#f5f5f7';
+      dropZone.style.borderColor = '#6a9fff';
+    });
+
+    dropZone.addEventListener('dragleave', function (e) {
+      e.preventDefault();
+      dropZone.style.background = '#ffffff';
+      dropZone.style.borderColor = '#4d8cff';
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+      e.preventDefault();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        fileName.textContent = e.dataTransfer.files[0].name;
+        dropZone.style.borderColor = '#2ecc71';
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -132,7 +132,17 @@ app.use("/heatmaps", express.static(path.join(__dirname, "../heatmaps")));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb://127.0.0.1:27017/deepfakeDB");
+
+// Replace with your MongoDB URI
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://abhhirram2003:dWTIDWriciqrhwvK@detections.qfbntr6.mongodb.net/';
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.log('❌ MongoDB connection error:', err));
 
 const detectionSchema = new mongoose.Schema({
   filename: String,
@@ -276,9 +286,11 @@ app.get("/learn", (req, res) => {
   res.render("learn");
 });
 
-app.listen(3002, () => {
-  console.log("✅ Server running on http://localhost:3002");
+const port = process.env.PORT || 3002;
+app.listen(port, '0.0.0.0', () => {
+  console.log(`✅ Server running on http://localhost:${port}`);
 });
+
 
 // const serverless = require("serverless-http");
 // module.exports.handler = serverless(app);

@@ -169,9 +169,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Home route
+// app.get("/", (req, res) => {
+//   res.send("Home route working!");
+// });
+
 app.get("/", (req, res) => {
-  res.send("Home route working!");
+  res.render("home"); // this looks for 'home.ejs' inside 'frontend/views'
 });
+
 
 // Detect (GET page)
 app.get("/detect", (req, res) => {

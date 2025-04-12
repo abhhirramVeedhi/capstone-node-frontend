@@ -139,7 +139,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Replace with your MongoDB URI
-const mongoURI = process.env.MONGO_URI || 'mongodb+srv://mongo:12345@detections.qfbntr6.mongodb.net/';
+// const mongoURI = process.env.MONGO_URI || 'mongodb+srv://mongo:12345@detections.qfbntr6.mongodb.net/?retryWrites=true&w=majority&appName=detections';
+
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://mongo:12345@detections.qfbntr6.mongodb.net/yourDBName?retryWrites=true&w=majority&appName=detections';
+
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, {

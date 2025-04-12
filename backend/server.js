@@ -193,10 +193,10 @@ app.post("/detect", upload.single("file"), async (req, res) => {
     formData.append("image", fs.createReadStream(filepath));
 
     const response = await fetch("https://capstone-node-frontend.onrender.com/predict", {
-      method: "POST",
-      body: formData,
-      headers: formData.getHeaders(),
+    method: "POST",
+    body: formData,
     });
+
 
     if (!response.ok)
       throw new Error(`Flask API Error: ${response.statusText}`);

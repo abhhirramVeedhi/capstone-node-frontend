@@ -1,6 +1,7 @@
-Flask==2.2.5
-flask-cors==3.0.10
-numpy==1.24.4
-opencv-python==4.8.1.78
-tensorflow==2.12.0
-matplotlib==3.7.1
+Flask>=2.2.5,<3.0
+flask-cors>=3.0.10,<4.0
+numpy>=1.24.4,<2.0
+opencv-python>=4.8.1.78,<5.0
+tensorflow>=2.12.0,<3.0
+matplotlib>=3.7.1,<4.0
+gunicorn>=20.1.0,<21.0

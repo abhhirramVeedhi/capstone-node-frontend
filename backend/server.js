@@ -275,6 +275,10 @@ app.get("/learn", (req, res) => {
   res.render("learn");
 });
 
-app.listen(3002, () => {
-  console.log("✅ Server running on http://localhost:3002");
-});
+// app.listen(3002, () => {
+//   console.log("✅ Server running on http://localhost:3002");
+// });
+
+const serverless = require("serverless-http");
+module.exports.handler = serverless(app);
+

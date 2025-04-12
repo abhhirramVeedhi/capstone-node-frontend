@@ -123,9 +123,14 @@ const fetch = (...args) =>
 const FormData = require("form-data");
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../views"));
+// app.set("views", path.join(__dirname, "../views"));
 
-express.static(path.join(__dirname, "../public"))
+// express.static(path.join(__dirname, "../public"))
+
+app.set("views", path.join(__dirname, "../frontend/views")); // Your EJS files
+
+
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/heatmaps", express.static(path.join(__dirname, "../heatmaps")));
